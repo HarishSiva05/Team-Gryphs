@@ -23,7 +23,7 @@ Open config.yml and update the following settings:
 * GitHub repository details (owner, repo name)
 * Kestra workflow configurations
 * Chatbot integration details
-* Customize the process_updates function in github_updates.py to handle the GitHub events according to your needs.
+* Customize the process_updates function in app.py to handle the GitHub events according to your needs.
 
 # Contact
 
