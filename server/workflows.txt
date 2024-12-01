@@ -1,0 +1,39 @@
+from kestra import Kestra
+from kestra.client import Client
+from utils import Github
+from llm import LLM
+
+kestra_client = Client()
+
+class GitHubLLMWorkflow(Kestra):
+    def fetch_github_updates(self):
+        github = Github()
+        return github.get_commit_info()
+
+    def process_with_llm(self, github_data):
+        llm = LLM()
+        messages = [
+            {"role": "system", "content": "Analyze the following GitHub commit data:"},
+            {"role": "user", "content": str(github_data)}
+        ]
+        response = llm.get_response(messages)
+        return response.choices[0].message.content
+
+    def update_frontend(self, llm_analysis):
+        print(f"Analysis to be sent to frontend: {llm_analysis}")
+        return "Frontend updated"
+
+    @classmethod
+    def workflow(cls):
+        return Kestra.builder(cls) \
+            .task(cls.fetch_github_updates) \
+            .task(cls.process_with_llm, follows=['fetch_github_updates']) \
+            .task(cls.update_frontend, follows=['process_with_llm']) \
+            .build()
+
+# Create an instance of the workflow
+github_llm_workflow = GitHubLLMWorkflow()
+
+# Submit the workflow to Kestra
+workflow_id = kestra_client.create_workflow(github_llm_workflow.workflow())
+print(f"Workflow created with ID: {workflow_id}")

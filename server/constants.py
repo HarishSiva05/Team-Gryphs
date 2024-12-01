@@ -1,0 +1,5 @@
+GROQ_API_KEY = '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'
+MODEL = 'llama3-groq-8b-8192-tool-use-preview'
+GITHUB_TOKEN = 'env'
+REPO_OWNER = 'NIXE05'
+REPO_NAME = 'Test_CIS'

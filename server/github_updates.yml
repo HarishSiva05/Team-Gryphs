@@ -1,0 +1,34 @@
+id: github_updates
+namespace: dev
+
+tasks:
+  - id: fetch_github_updates
+    type: io.kestra.plugin.scripts.python.Script
+    script: |
+      import requests
+      import json
+      import os
+
+      owner = "NIXE05"
+      repo = "Test_CIS"
+      token = os.environ.get("GITHUB_TOKEN")
+
+      headers = {
+          "Authorization": f"token {token}",
+          "Accept": "application/vnd.github.v3+json"
+      }
+
+      url = f"https://api.github.com/repos/{owner}/{repo}/events"
+      response = requests.get(url, headers=headers)
+      
+      if response.status_code == 200:
+          events = response.json()
+          print(json.dumps(events[:5], indent=2))
+      else:
+          print(f"Failed to fetch updates. Status code: {response.status_code}")
+
+  - id: process_updates
+    type: io.kestra.core.tasks.scripts.Bash
+    commands:
+      - echo "Processing GitHub updates"
+      - echo "Updates fetched successfully"
